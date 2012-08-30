@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows;
 using MsmqFastView.Infrastructure;
@@ -30,5 +32,22 @@ namespace MsmqFastView
             Settings.Default.MainWindowPlacement = new JavaScriptSerializer().Serialize(this.GetPlacement());
             Settings.Default.Save();
         }
+
+		private void OnEditMachineNameIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if ((bool)e.NewValue)
+			{
+				// must be deferred, otherwise Focus() will not work
+				Task.Factory.StartNew(
+					() =>
+					{
+						this.tbCandidateMachineName.Focus();
+						this.tbCandidateMachineName.SelectAll();
+					}, 
+					CancellationToken.None, 
+					TaskCreationOptions.None, 
+					TaskScheduler.FromCurrentSynchronizationContext());
+			}
+		}
     }
 }
