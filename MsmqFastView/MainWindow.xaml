@@ -145,7 +145,7 @@
                     </TextBlock>
                     <TextBlock Visibility="{Binding MachineNameVisibility}">
                         <Hyperlink Command="{Binding ChangeMachine}">
-                            <Run Text="{Binding MachineName}" />
+                            <Run Text="{Binding MachineName, Mode=OneWay}" />
                         </Hyperlink>
                     </TextBlock>
                     <StackPanel Visibility="{Binding EditMachineNameVisibility}" Orientation="Horizontal" IsVisibleChanged="OnEditMachineNameIsVisibleChanged">

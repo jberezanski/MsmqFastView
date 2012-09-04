@@ -33,21 +33,21 @@ namespace MsmqFastView
             Settings.Default.Save();
         }
 
-		private void OnEditMachineNameIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			if ((bool)e.NewValue)
-			{
-				// must be deferred, otherwise Focus() will not work
-				Task.Factory.StartNew(
-					() =>
-					{
-						this.tbCandidateMachineName.Focus();
-						this.tbCandidateMachineName.SelectAll();
-					}, 
-					CancellationToken.None, 
-					TaskCreationOptions.None, 
-					TaskScheduler.FromCurrentSynchronizationContext());
-			}
-		}
+        private void OnEditMachineNameIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if ((bool)e.NewValue)
+            {
+                // must be deferred, otherwise Focus() will not work
+                Task.Factory.StartNew(
+                    () =>
+                    {
+                        this.tbCandidateMachineName.Focus();
+                        this.tbCandidateMachineName.SelectAll();
+                    },
+                    CancellationToken.None,
+                    TaskCreationOptions.None,
+                    TaskScheduler.FromCurrentSynchronizationContext());
+            }
+        }
     }
 }
