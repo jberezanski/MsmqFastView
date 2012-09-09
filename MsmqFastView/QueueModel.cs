@@ -99,13 +99,31 @@ namespace MsmqFastView
 
         private static string GetFriendlyName(MessageQueue queue)
         {
-            string prefix = "private$\\";
-            if (queue.QueueName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            var formatName = queue.FormatName;
+
+            // QueueName is unavailable on remote queue with DIRECT FormatName
+            // MachineName is also unavailable, so FormatName must be parsed to detect this case
+            if (formatName.StartsWith("DIRECT", StringComparison.OrdinalIgnoreCase)
+                && !formatName.StartsWith("DIRECT=OS:" + Environment.MachineName, StringComparison.OrdinalIgnoreCase))
             {
-                return queue.QueueName.Substring(prefix.Length);
+                return formatName;
             }
 
-            return queue.QueueName;
+            // in case of exception, better to display raw FormatName than fail to display the entire message list
+            try
+            {
+                string prefix = "private$\\";
+                if (queue.QueueName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    return queue.QueueName.Substring(prefix.Length);
+                }
+
+                return queue.QueueName;
+            }
+            catch (MessageQueueException)
+            {
+                return queue.FormatName;
+            }
         }
 
         private void InitMessages()
