@@ -101,14 +101,10 @@ namespace MsmqFastView
         {
             var formatName = queue.FormatName;
 
-            // QueueName is unavailable on remote queue with DIRECT FormatName
-            // MachineName is also unavailable, so FormatName must be parsed to detect this case
-            if (formatName.StartsWith("DIRECT", StringComparison.OrdinalIgnoreCase)
-                && !formatName.StartsWith("DIRECT=OS:" + Environment.MachineName, StringComparison.OrdinalIgnoreCase))
-            {
-                return formatName;
-            }
-
+            // QueueName is unavailable on remote queue with DIRECT FormatName when the following conditions are met:
+            // * this machine is not joined to a domain, so MSMQ path translation mechanisms work only on local queues
+            // * the MessageQueue object does not have its private field queuePath set 
+            //   (note: queues obtained from GetPrivateQueuesByMachine DO have this field set, but those returned by e.g. Message.ResponseQueue, or constructed from format name string, DO NOT)
             // in case of exception, better to display raw FormatName than fail to display the entire message list
             try
             {
